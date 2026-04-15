@@ -2,6 +2,7 @@ import { useState } from "react";
 import Swal from "sweetalert2";
 
 export default function Admin() {
+  const API = import.meta.env.VITE_API_URL;
   const [key, setKey] = useState(localStorage.getItem("admin") || "");
   const [logged, setLogged] = useState(!!localStorage.getItem("admin"));
 
@@ -65,7 +66,7 @@ export default function Admin() {
     data.append("category", form.category);
     data.append("image", form.image);
 
-    const res = await fetch("http://localhost:5000/products", {
+    const res = await fetch(`${API}/products`, {
       method: "POST",
       headers: { key: "admin123" },
       body: data,
