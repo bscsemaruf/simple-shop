@@ -28,7 +28,7 @@ export default function Home() {
       setLoading(true);
       const res = await fetch(`${API}/products`);
       const data = await res.json();
-      console.log(data);
+
       setProducts(data);
     } catch (err) {
       console.error("Error loading products", err);
@@ -51,10 +51,15 @@ export default function Home() {
 
   // DELETE
   const deleteProduct = async (id: string) => {
-    await fetch(`${API}/products/${id}`, {
+    console.log({ id });
+    const result = await fetch(`${API}/products/${id}`, {
       method: "DELETE",
       headers: { key: "admin123" },
     });
+
+    if (result) {
+      console.log("re", result);
+    }
 
     setProducts(products.filter((p) => p._id !== id));
   };
@@ -132,10 +137,14 @@ export default function Home() {
         // SKELETON
         <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-6">
           {[...Array(6)].map((_, i) => (
-            <div
-              key={i}
-              className="animate-pulse bg-gray-200 h-72 rounded-xl"
-            ></div>
+            <div key={i} className="animate-pulse bg-gray-200 h-72 rounded-xl">
+              <span className="font-semibold">
+                Loading....
+                <div className="flex justify-center items-center h-40">
+                  <div className="w-10 h-10 border-4 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+                </div>
+              </span>
+            </div>
           ))}
         </div>
       ) : (
@@ -158,28 +167,43 @@ export default function Home() {
 
               {/* CONTENT */}
               <div className="p-4 text-center">
-                <h3 className="font-semibold">{p.name}</h3>
-                <p className="text-green-700 font-semibold">{p.price} ৳</p>
-
-                <Link
-                  to="/contact"
-                  className="inline-block mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
-                >
-                  Contact
-                </Link>
+                <div className="flex justify-between items-center ">
+                  <div className="text-left">
+                    <h3 className="font-semibold">Name: {p.name}</h3>
+                    <p className="text-green-700 font-semibold">
+                      Price: {p.price}৳{" "}
+                    </p>
+                  </div>
+                  <div>
+                    <Link
+                      to="/contact"
+                      className="px-5 py-2 bg-green-600 text-white rounded-lg 
+                    hover:bg-green-700 active:scale-95 
+                    transition duration-200 shadow-md hover:shadow-l"
+                    >
+                      Contact
+                    </Link>
+                  </div>
+                </div>
 
                 {isAdmin && (
-                  <div className="flex justify-center gap-2 mt-3">
+                  <div className="flex justify-end gap-2 mt-3">
                     <button
                       onClick={() => openEditModal(p)}
-                      className="px-3 py-1 bg-yellow-400 rounded"
+                      className="px-4 py-1.5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white 
+           font-semibold rounded-md shadow hover:shadow-lg 
+           hover:from-yellow-500 hover:to-yellow-600 
+           active:scale-95 transition duration-200"
                     >
                       Edit
                     </button>
 
                     <button
                       onClick={() => deleteProduct(p._id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded"
+                      className="px-4 py-1.5 bg-red-500 text-white font-medium rounded-md shadow-sm
+             hover:bg-red-600 hover:shadow-md active:scale-95
+             transition-all duration-200 ease-in-out
+             focus:outline-none focus:ring-2 focus:ring-red-300"
                     >
                       Delete
                     </button>
@@ -200,19 +224,39 @@ export default function Home() {
             <input
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="border w-full mb-2 p-2"
+              className="border border-green-400 w-full mb-2 p-2 rounded-md"
             />
 
             <input
               type="number"
               value={form.price}
               onChange={(e) => setForm({ ...form, price: e.target.value })}
-              className="border w-full mb-3 p-2"
+              className="border w-full border-green-400 mb-3 p-2 rounded-md"
             />
 
             <div className="flex justify-end gap-2">
-              <button onClick={() => setIsOpen(false)}>Cancel</button>
-              <button onClick={handleUpdate}>Update</button>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="px-5 py-2 rounded-lg border border-gray-300 text-gray-600 
+    hover:bg-gray-100 hover:text-gray-800 
+    focus:outline-none focus:ring-2 focus:ring-gray-300 
+    transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdate}
+                className="px-5 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 
+    text-white font-semibold 
+    hover:from-green-600 hover:to-green-700 
+    active:scale-95 
+    focus:outline-none focus:ring-2 focus:ring-green-400 
+    shadow-md hover:shadow-lg 
+    disabled:opacity-50 disabled:cursor-not-allowed 
+    transition"
+              >
+                Update
+              </button>
             </div>
           </div>
         </div>

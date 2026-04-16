@@ -12,10 +12,12 @@ export default function About() {
       </div>
 
       {/* CONTENT */}
-      <div className="space-y-4 text-gray-800 leading-relaxed">
+      <div className="space-y-4 text-gray-900 leading-relaxed text left text-md">
         <p>
-          Welcome to our garments store. We specialize in providing premium
-          quality clothing products including shirts, pants, jackets, and more.
+          Garments Shop is committed to supplying dependable garments
+          accessories like poly, collar, and carton at competitive prices. We
+          focus on building strong relationships with our customers by
+          delivering quality products and honest service every time.
         </p>
 
         <p>
