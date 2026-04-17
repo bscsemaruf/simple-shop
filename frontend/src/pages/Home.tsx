@@ -11,7 +11,6 @@ interface Product {
 
 export default function Home() {
   const API = import.meta.env.VITE_API_URL;
-  console.log("hello", API);
   const [products, setProducts] = useState<Product[]>([]);
   const [selected, setSelected] = useState("All");
   const [loading, setLoading] = useState(true);
