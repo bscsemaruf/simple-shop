@@ -54,7 +54,11 @@ export default function Contact() {
 
         <button
           onClick={submit}
-          className="bg-black text-white w-full py-2 rounded hover:bg-gray-800"
+          className="px-4 py-2 w-full mb-2 rounded-lg text-md font-medium
+    bg-green-500 text-white
+    shadow-md hover:shadow-lg
+    hover:bg-green-600 hover:scale-[1.02]
+    transition-all duration-200"
         >
           Send Message
         </button>

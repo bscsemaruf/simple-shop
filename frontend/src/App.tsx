@@ -10,7 +10,7 @@ export default function App() {
       {/* FULL PAGE LAYOUT */}
       <div className="min-h-screen flex flex-col">
         {/* NAVBAR */}
-        <nav className="w-full bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-50">
+        <nav className="w-full bg-green-100 backdrop-blur-md border-b border-green-300 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between flex-wrap gap-2">
             {/* LOGO */}
             <div className="text-lg md:text-2xl font-extrabold tracking-wide text-gray-800">

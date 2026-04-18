@@ -102,7 +102,7 @@ export default function Home() {
   };
 
   return (
-    <div className="p-6">
+    <div className="pb-6">
       {/* HERO */}
       <div className="bg-linear-to-br from-green-50 via-emerald-50 to-green-200 min-h-[40vh] rounded-xl p-16 mb-6 shadow-sm flex flex-col justify-center text-center">
         <h1 className="text-3xl font-bold">

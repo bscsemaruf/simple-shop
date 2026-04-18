@@ -132,7 +132,8 @@ export default function Admin() {
         </button>
       </div>
 
-      <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
+      <h2 className="text-2xl font-bold mb-8 text-center">Admin Panel</h2>
+      <h2 className="text-xl font-bold mb-4">Product Add</h2>
 
       {/* NAME */}
       <input
@@ -163,11 +164,28 @@ export default function Admin() {
         ))}
       </select>
 
+      {/* ADD CATEGORY */}
+      <div className="flex  gap-2 mb-2 justify-between items-center ">
+        <input
+          className="flex-1 border border-green-400 p-2  rounded-md"
+          placeholder="New Category"
+          value={newCat}
+          onChange={(e) => setNewCat(e.target.value)}
+        />
+
+        <button
+          onClick={addCategory}
+          className="bg-blue-500 text-white px-4 py-2 rounded "
+        >
+          Add
+        </button>
+      </div>
+
       {/* FILE */}
       <input
         key={fileKey}
         type="file"
-        className="border border-green-400 p-2 mb-2 rounded-md w-full"
+        className="border border-green-400 p-2 mb-6 rounded-md w-full"
         onChange={(e) => setForm({ ...form, image: e.target.files?.[0] })}
       />
 
@@ -182,23 +200,6 @@ export default function Admin() {
       >
         Add Product
       </button>
-
-      {/* ADD CATEGORY */}
-      <div className="flex gap-2">
-        <input
-          className="border border-green-400 p-2 w-full rounded-md"
-          placeholder="New Category"
-          value={newCat}
-          onChange={(e) => setNewCat(e.target.value)}
-        />
-
-        <button
-          onClick={addCategory}
-          className="bg-blue-500 text-white px-3 rounded"
-        >
-          Add
-        </button>
-      </div>
     </div>
   );
 }
