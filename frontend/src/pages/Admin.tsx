@@ -73,38 +73,48 @@ export default function Admin() {
 
       return;
     }
-    setAdd(true);
-    const data = new FormData();
-    data.append("name", form.name);
-    data.append("price", form.price);
-    data.append("category", form.category);
-    data.append("image", form.image);
+    try {
+      setAdd(true);
+      const data = new FormData();
+      data.append("name", form.name);
+      data.append("price", form.price);
+      data.append("category", form.category);
+      data.append("image", form.image);
 
-    const res = await fetch(`${API}/products`, {
-      method: "POST",
-      headers: { key: "admin123" },
-      body: data,
-    });
-
-    const result = await res.json();
-
-    if (result) {
-      // ✅ RESET FORM
-      setForm({
-        name: "",
-        price: "",
-        category: "",
-        image: null,
+      const res = await fetch(`${API}/products`, {
+        method: "POST",
+        headers: { key: "admin123" },
+        body: data,
       });
-      setFileKey((prev) => prev + 1);
 
+      const result = await res.json();
+
+      if (result) {
+        // ✅ RESET FORM
+        setForm({
+          name: "",
+          price: "",
+          category: "",
+          image: null,
+        });
+        setFileKey((prev) => prev + 1);
+
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your product has been added!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        setAdd(false);
+      }
+    } catch (error) {
+      console.log(error);
       Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "Your product has been added!",
-        showConfirmButton: false,
-        timer: 1500,
+        icon: "error",
+        title: "Upload failed!",
       });
+    } finally {
       setAdd(false);
     }
   };
@@ -167,7 +177,7 @@ export default function Admin() {
       <input
         value={form.price || ""}
         className="border border-green-400 p-2 w-full mb-2 rounded-md"
-        placeholder="Price"
+        placeholder="Price ৳"
         type="number"
         onChange={(e) => setForm({ ...form, price: e.target.value })}
       />
@@ -202,14 +212,53 @@ export default function Admin() {
       </div>
 
       {/* FILE */}
-      <input
+      {/* <input
         key={fileKey}
         type="file"
+        placeholder="📤 upload"
         className="border border-green-400 p-2 mb-6 rounded-md w-full"
         onChange={(e) =>
           setForm({ ...form, image: e.target.files?.[0] || null })
         }
+      /> */}
+
+      {/* FILE UPLOAD */}
+      <input
+        key={fileKey}
+        type="file"
+        id="imageUpload"
+        className="hidden"
+        onChange={(e) =>
+          setForm({ ...form, image: e.target.files?.[0] || null })
+        }
       />
+
+      <label
+        htmlFor="imageUpload"
+        className="flex flex-col items-center justify-center border-2 border-dashed border-green-400 
+  p-6 mb-4 rounded-lg cursor-pointer hover:bg-green-50 transition"
+      >
+        <span className="text-green-600 font-medium text-lg">
+          📤 Upload Product Image
+        </span>
+        <span className="text-sm text-gray-500">Click to choose file</span>
+      </label>
+
+      {/* FILE NAME */}
+      {form.image && (
+        <p className="text-sm text-gray-700 mb-2 text-center">
+          Selected: {form.image.name}
+        </p>
+      )}
+
+      {/* IMAGE PREVIEW */}
+      {form.image && (
+        <img
+          src={URL.createObjectURL(form.image)}
+          alt="preview"
+          className="w-32 h-32 object-cover mx-auto mb-4 rounded-lg border"
+        />
+      )}
 
       {/* BUTTON */}
       <button
