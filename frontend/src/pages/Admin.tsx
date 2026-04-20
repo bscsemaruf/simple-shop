@@ -1,13 +1,26 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 
+type FromValue = {
+  name: string;
+  price: string;
+  category: string;
+  image: File | null;
+};
+
 export default function Admin() {
   const API = import.meta.env.VITE_API_URL;
   const [key, setKey] = useState(localStorage.getItem("admin") || "");
   const [logged, setLogged] = useState(!!localStorage.getItem("admin"));
 
-  const [form, setForm] = useState<any>({});
+  const [form, setForm] = useState<FromValue>({
+    name: "",
+    price: "",
+    category: "",
+    image: null,
+  });
   const [fileKey, setFileKey] = useState(0);
+  const [add, setAdd] = useState(false);
 
   const [cats, setCats] = useState<string[]>([
     "Poly",
@@ -57,9 +70,10 @@ export default function Admin() {
         showConfirmButton: false,
         timer: 1500,
       });
+
       return;
     }
-
+    setAdd(true);
     const data = new FormData();
     data.append("name", form.name);
     data.append("price", form.price);
@@ -76,7 +90,12 @@ export default function Admin() {
 
     if (result) {
       // ✅ RESET FORM
-      setForm({});
+      setForm({
+        name: "",
+        price: "",
+        category: "",
+        image: null,
+      });
       setFileKey((prev) => prev + 1);
 
       Swal.fire({
@@ -86,6 +105,7 @@ export default function Admin() {
         showConfirmButton: false,
         timer: 1500,
       });
+      setAdd(false);
     }
   };
 
@@ -186,19 +206,23 @@ export default function Admin() {
         key={fileKey}
         type="file"
         className="border border-green-400 p-2 mb-6 rounded-md w-full"
-        onChange={(e) => setForm({ ...form, image: e.target.files?.[0] })}
+        onChange={(e) =>
+          setForm({ ...form, image: e.target.files?.[0] || null })
+        }
       />
 
       {/* BUTTON */}
       <button
         onClick={addProduct}
+        disabled={add}
         className="px-4 py-2 w-full mb-2 rounded-lg text-md font-medium
     bg-green-500 text-white
     shadow-md hover:shadow-lg
     hover:bg-green-600 hover:scale-[1.02]
     transition-all duration-200"
       >
-        Add Product
+        {add ? "Adding..." : "Add Product"}
+        {/* Add Product */}
       </button>
     </div>
   );

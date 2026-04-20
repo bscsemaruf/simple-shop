@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 interface Product {
   _id: string;
@@ -14,6 +15,8 @@ export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selected, setSelected] = useState("All");
   const [loading, setLoading] = useState(true);
+  const [loadingId, setLoadingId] = useState<string | null>(null);
+  const [updating, setUpdating] = useState(false);
 
   const [isOpen, setIsOpen] = useState(false);
   const [editItem, setEditItem] = useState<Product | null>(null);
@@ -49,18 +52,55 @@ export default function Home() {
       : products.filter((p) => p.category === selected);
 
   // DELETE
+  // const deleteProduct = async (id: string) => {
+  //   console.log({ id });
+  //   const result = await fetch(`${API}/products/${id}`, {
+  //     method: "DELETE",
+  //     headers: { key: "admin123" },
+  //   });
+
+  //   if (result) {
+  //     console.log("result", result);
+  //   }
+
+  //   setProducts(products.filter((p) => p._id !== id));
+  // };
+
   const deleteProduct = async (id: string) => {
-    console.log({ id });
-    const result = await fetch(`${API}/products/${id}`, {
-      method: "DELETE",
-      headers: { key: "admin123" },
-    });
+    try {
+      setLoadingId(id);
+      const res = await fetch(`${API}/products/${id}`, {
+        method: "DELETE",
+        headers: { key: "admin123" },
+      });
 
-    if (result) {
-      console.log("re", result);
+      // ❗ check success
+      if (!res.ok) throw new Error("Delete failed");
+
+      // ✅ read backend response
+      // const data = await res.json();
+      // console.log("deleted:", data);
+
+      // ✅ update UI
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+
+      // ✅ show success popup
+      Swal.fire({
+        icon: "success",
+        title: "Product deleted successfully!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.log(err);
+
+      Swal.fire({
+        icon: "error",
+        title: "Delete failed!",
+      });
+    } finally {
+      setLoadingId(null);
     }
-
-    setProducts(products.filter((p) => p._id !== id));
   };
 
   // OPEN EDIT
@@ -76,29 +116,49 @@ export default function Home() {
   // UPDATE
   const handleUpdate = async () => {
     if (!editItem) return;
+    setUpdating(true);
+    try {
+      const result = await fetch(`${API}/products/${editItem._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          key: "admin123",
+        },
+        body: JSON.stringify({
+          name: form.name,
+          price: Number(form.price),
+        }),
+      });
+      // ❗ check success
+      if (!result.ok) throw new Error("Edited failed");
 
-    await fetch(`${API}/products/${editItem._id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        key: "admin123",
-      },
-      body: JSON.stringify({
-        name: form.name,
-        price: Number(form.price),
-      }),
-    });
+      // ✅ update UI
+      setProducts(
+        products.map((p) =>
+          p._id === editItem._id
+            ? { ...p, name: form.name, price: Number(form.price) }
+            : p,
+        ),
+      );
 
-    setProducts(
-      products.map((p) =>
-        p._id === editItem._id
-          ? { ...p, name: form.name, price: Number(form.price) }
-          : p,
-      ),
-    );
+      setIsOpen(false);
+      setEditItem(null);
+      Swal.fire({
+        icon: "success",
+        title: "Product edited successfully!",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } catch (err) {
+      console.log(err);
 
-    setIsOpen(false);
-    setEditItem(null);
+      Swal.fire({
+        icon: "error",
+        title: "Delete failed!",
+      });
+    } finally {
+      setUpdating(false);
+    }
   };
 
   return (
@@ -199,12 +259,13 @@ export default function Home() {
 
                     <button
                       onClick={() => deleteProduct(p._id)}
+                      disabled={loadingId == p._id}
                       className="px-4 py-1.5 bg-red-500 text-white font-medium rounded-md shadow-sm
              hover:bg-red-600 hover:shadow-md active:scale-95
              transition-all duration-200 ease-in-out
              focus:outline-none focus:ring-2 focus:ring-red-300"
                     >
-                      Delete
+                      {loadingId == p._id ? "Deleting..." : "Delete"}
                     </button>
                   </div>
                 )}
@@ -245,6 +306,7 @@ export default function Home() {
               </button>
               <button
                 onClick={handleUpdate}
+                disabled={updating}
                 className="px-5 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 
     text-white font-semibold 
     hover:from-green-600 hover:to-green-700 
@@ -254,7 +316,7 @@ export default function Home() {
     disabled:opacity-50 disabled:cursor-not-allowed 
     transition"
               >
-                Update
+                {updating ? "Updating" : "Update"}
               </button>
             </div>
           </div>
