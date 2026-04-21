@@ -25,23 +25,23 @@ export default function Home() {
   const isAdmin = localStorage.getItem("admin") === "admin123";
 
   // LOAD PRODUCTS
-  const loadProducts = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch(`${API}/products`);
-      const data = await res.json();
-
-      setProducts(data);
-    } catch (err) {
-      console.error("Error loading products", err);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`${API}/products`);
+        const data = await res.json();
+
+        setProducts(data);
+      } catch (err) {
+        console.error("Error loading products", err);
+      } finally {
+        setLoading(false);
+      }
+    };
     loadProducts();
-  }, []);
+  }, [API]);
 
   // CATEGORY LIST
   const categories = ["All", ...new Set(products.map((p) => p.category))];
@@ -145,7 +145,7 @@ export default function Home() {
       setEditItem(null);
       Swal.fire({
         icon: "success",
-        title: "Product edited successfully!",
+        title: "Product updated successfully!",
         timer: 1500,
         showConfirmButton: false,
       });
@@ -164,8 +164,8 @@ export default function Home() {
   return (
     <div className="pb-6">
       {/* HERO */}
-      <div className="bg-linear-to-br from-green-50 via-emerald-50 to-green-200 min-h-[40vh] rounded-xl p-16 mb-6 shadow-sm flex flex-col justify-center text-center">
-        <h1 className="text-3xl font-bold">
+      <div className="bg-linear-to-br from-green-50 via-emerald-50 to-green-200 min-h-[45vh] rounded-xl p-16 mb-6 shadow-sm flex flex-col justify-center text-center">
+        <h1 className="text-3xl font-bold bg-linear-to-r from-green-400 to-emerald-200 bg-clip-text text-transparent ">
           Premium Garments Materials and Accessories Collection
         </h1>
         <p className="text-gray-800 font-semibold mt-2">
@@ -249,7 +249,7 @@ export default function Home() {
                   <div className="flex justify-end gap-2 mt-3">
                     <button
                       onClick={() => openEditModal(p)}
-                      className="px-4 py-1.5 bg-gradient-to-r from-yellow-400 to-yellow-500 text-white 
+                      className="px-4 py-1.5 bg-linear-to-r from-yellow-400 to-yellow-500 text-white 
            font-semibold rounded-md shadow hover:shadow-lg 
            hover:from-yellow-500 hover:to-yellow-600 
            active:scale-95 transition duration-200"
@@ -307,7 +307,7 @@ export default function Home() {
               <button
                 onClick={handleUpdate}
                 disabled={updating}
-                className="px-5 py-2 rounded-lg bg-gradient-to-r from-green-500 to-green-600 
+                className="px-5 py-2 rounded-lg bg-linear-to-r from-green-500 to-green-600 
     text-white font-semibold 
     hover:from-green-600 hover:to-green-700 
     active:scale-95 
