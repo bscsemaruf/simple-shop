@@ -12,6 +12,7 @@ export default function Admin() {
   const API = import.meta.env.VITE_API_URL;
   const [key, setKey] = useState(localStorage.getItem("admin") || "");
   const [logged, setLogged] = useState(!!localStorage.getItem("admin"));
+  const [error, setError] = useState("");
 
   const [form, setForm] = useState<FromValue>({
     name: "",
@@ -52,12 +53,22 @@ export default function Admin() {
     setLogged(false);
   };
 
-  // ADD CATEGORY
   const addCategory = () => {
-    if (newCat && !cats.includes(newCat)) {
-      setCats([...cats, newCat]);
-      setNewCat("");
+    if (!newCat) {
+      setError("Please enter a category");
+      return;
     }
+
+    const exists = cats.some((c) => c.toLowerCase() === newCat.toLowerCase());
+
+    if (exists) {
+      setError("This category already exists");
+      return;
+    }
+
+    setCats([...cats, newCat]);
+    setNewCat("");
+    setError(""); // clear error
   };
 
   // ADD PRODUCT
@@ -200,7 +211,10 @@ export default function Admin() {
           className="flex-1 border border-green-400 p-2  rounded-md"
           placeholder="New Category"
           value={newCat}
-          onChange={(e) => setNewCat(e.target.value)}
+          onChange={(e) => {
+            setNewCat(e.target.value);
+            setError("");
+          }}
         />
 
         <button
@@ -210,17 +224,9 @@ export default function Admin() {
           Add
         </button>
       </div>
-
-      {/* FILE */}
-      {/* <input
-        key={fileKey}
-        type="file"
-        placeholder="📤 upload"
-        className="border border-green-400 p-2 mb-6 rounded-md w-full"
-        onChange={(e) =>
-          setForm({ ...form, image: e.target.files?.[0] || null })
-        }
-      /> */}
+      {error && (
+        <p className="text-red-600 mb-2">This category already exist!</p>
+      )}
 
       {/* FILE UPLOAD */}
       <input
@@ -271,7 +277,6 @@ export default function Admin() {
     transition-all duration-200"
       >
         {add ? "Adding..." : "Add Product"}
-        {/* Add Product */}
       </button>
     </div>
   );
